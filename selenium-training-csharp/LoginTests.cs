@@ -5,27 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Chrome;
 
 namespace selenium_training_csharp
 {
     [TestFixture]
-    class LoginTests
+    class LoginTests : TestBase
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
-
-        [SetUp]
-        public void Start()
-        {
-            var options = new ChromeOptions();
-            options.AddArgument("--disable-features=RendererCodeIntegrity");
-            driver = new ChromeDriver(options);
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-        }
-
+     
         [Test]
         public void LoginTest()
         {
@@ -35,11 +21,5 @@ namespace selenium_training_csharp
             driver.FindElement(By.Name("login")).Click();           
         }
 
-        [TearDown]
-        public void Stop()
-        {
-            driver.Quit();
-            driver = null;
-        }
     }
 }
