@@ -13,7 +13,7 @@ namespace selenium_training_csharp
     {
      
         [Test]
-        public void LoginTest()
+        public void LoginTest_HW3()
         {
             driver.Url = "http://localhost/litecart/admin/";
             driver.FindElement(By.Name("username")).SendKeys("admin");

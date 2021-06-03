@@ -12,7 +12,7 @@ namespace selenium_training_csharp
     public class ProductTests : TestBase
     {
         [Test]
-        public void StickersTest()
+        public void StickersTest_HW8()
         {
             driver.Url = "http://localhost/litecart/";
             var productLocator = By.CssSelector("li.product");

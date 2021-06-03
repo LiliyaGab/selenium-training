@@ -12,7 +12,7 @@ namespace selenium_training_csharp
     {
 
         [Test]
-        public void FirstTest()
+        public void FirstTest_HW1()
         {
             driver.Url = "http://www.google.com";
             driver.FindElement(By.Name("q")).SendKeys("webdriver");
