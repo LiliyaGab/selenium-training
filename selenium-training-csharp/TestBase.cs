@@ -9,6 +9,8 @@ using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.IE;
 
 namespace selenium_training_csharp
 {
