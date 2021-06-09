@@ -34,10 +34,11 @@ namespace selenium_training_csharp
             driver.FindElement(By.Name("address1")).SendKeys(account.Address);
             driver.FindElement(By.Name("postcode")).SendKeys(account.Postcode);
             driver.FindElement(By.Name("city")).SendKeys(account.City);
-            var country = new SelectElement(driver.FindElement(By.Name("country_code")));
-            country.SelectByText("United States");
-            var zone = new SelectElement(driver.FindElement(By.CssSelector("select[name=zone_code]")));
-            zone.SelectByText("Alaska");
+            var country = driver.FindElement(By.Name("country_code"));
+            (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].value=\"US\"; arguments[0].dispatchEvent(new Event('change'))", country);
+            var zone = driver.FindElement(By.CssSelector("select[name=zone_code]"));
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("select[name=zone_code]")));
+            (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].value=\"AK\"; arguments[0].dispatchEvent(new Event('change'))", zone);     
             driver.FindElement(By.Name("email")).SendKeys(account.Email);
             driver.FindElement(By.Name("phone")).SendKeys(account.Phone);
             driver.FindElement(By.Name("password")).SendKeys(account.Password);

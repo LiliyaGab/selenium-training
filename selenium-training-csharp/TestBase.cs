@@ -25,6 +25,7 @@ namespace selenium_training_csharp
             var options = new ChromeOptions();
             options.AddArgument("--disable-features=RendererCodeIntegrity");
             driver = new ChromeDriver(options);
+            //driver = new FirefoxDriver();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
