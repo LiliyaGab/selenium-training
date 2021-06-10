@@ -7,6 +7,8 @@ using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.IO;
+using System.Reflection;
 
 namespace selenium_training_csharp
 {
@@ -90,6 +92,49 @@ namespace selenium_training_csharp
             }
 
         }
+        [Test]
+        public void AddProductTest_HW12()
+        {
+            driver.Url = "http://localhost/litecart/admin/";
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+
+            driver.FindElement(By.CssSelector("a[href$=catalog]")).Click();
+            driver.FindElement(By.CssSelector("a[href$=edit_product]")).Click();
+
+            driver.FindElement(By.Name("status")).Click();
+            driver.FindElement(By.Name("name[en]")).SendKeys("Test product");
+            driver.FindElement(By.Name("code")).SendKeys("123");
+            driver.FindElement(By.Name("quantity")).Clear();
+            driver.FindElement(By.Name("quantity")).SendKeys("10");
+            var file = "product.jpg";
+            var absPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), file);
+            driver.FindElement(By.Name("new_images[]")).SendKeys(absPath);
+            (driver as IJavaScriptExecutor).ExecuteScript($"document.getElementsByName('date_valid_from')[0].value = '{DateTime.Today.ToString("yyyy-MM-dd")}'");
+            (driver as IJavaScriptExecutor).ExecuteScript($"document.getElementsByName('date_valid_to')[0].value = '{DateTime.Today.AddDays(20).ToString("yyyy-MM-dd")}'"); 
+                
+            driver.FindElement(By.CssSelector("a[href$=tab-information]")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Name("manufacturer_id")));
+            (new SelectElement(driver.FindElement(By.Name("manufacturer_id")))).SelectByValue("1");
+            driver.FindElement(By.Name("keywords")).SendKeys("test");
+            driver.FindElement(By.Name("short_description[en]")).SendKeys("short description");
+            driver.FindElement(By.CssSelector(".trumbowyg-editor")).SendKeys("description");
+            driver.FindElement(By.Name("head_title[en]")).SendKeys("test product");
+            driver.FindElement(By.Name("meta_description[en]")).SendKeys("meta description");
+
+            driver.FindElement(By.CssSelector("a[href$=tab-prices]")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Name("purchase_price")));
+            driver.FindElement(By.Name("purchase_price")).Clear();
+            driver.FindElement(By.Name("purchase_price")).SendKeys("6");
+            (new SelectElement(driver.FindElement(By.Name("purchase_price_currency_code")))).SelectByValue("USD");
+            driver.FindElement(By.Name("prices[USD]")).SendKeys("5");
+            driver.FindElement(By.Name("prices[EUR]")).SendKeys("4");
+            driver.FindElement(By.Name("save")).Click();
+            Assert.True(IsElementPresent(By.XPath("//a[text()='Test product']")));
+
+
+        }
         public bool IsElementsTextSorted(By elementsLocator)
         {
             var elements = driver.FindElements(elementsLocator);
@@ -105,6 +150,13 @@ namespace selenium_training_csharp
             }
             sortedElementText.Sort();
             return elementText.SequenceEqual(sortedElementText);
+        }
+        public void SetDatepicker(IWebDriver driver, string cssSelector, string date)
+        {
+            new WebDriverWait(driver, TimeSpan.FromSeconds(30)).Until<bool>(
+                d => driver.FindElement(By.CssSelector(cssSelector)).Displayed);
+            (driver as IJavaScriptExecutor).ExecuteScript(
+                String.Format("$('{0}').datepicker('setDate', '{1}')", cssSelector, date));
         }
     }
 }
