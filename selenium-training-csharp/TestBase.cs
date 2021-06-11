@@ -18,6 +18,7 @@ namespace selenium_training_csharp
     {
         public IWebDriver driver;
         public WebDriverWait wait;
+        public TimeSpan implicitWaitTimeout = TimeSpan.FromSeconds(5);
 
         [SetUp]
         public void Start()
@@ -26,7 +27,8 @@ namespace selenium_training_csharp
             options.AddArgument("--disable-features=RendererCodeIntegrity");
             driver = new ChromeDriver(options);
             //driver = new FirefoxDriver();
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            driver.Manage().Window.Maximize();
+            driver.Manage().Timeouts().ImplicitWait = implicitWaitTimeout;
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
         [TearDown]
@@ -37,16 +39,15 @@ namespace selenium_training_csharp
         }
 
         public bool IsElementPresent (By locator)
-        {
+        {           
             try
             {
-                wait.Until(d => d.FindElement(locator));
-                return true;
+                return driver.FindElements(locator).Count > 0;
             }
             catch(TimeoutException ex)
             {
                 return false;
-            }
+            }           
         }
     }
 }

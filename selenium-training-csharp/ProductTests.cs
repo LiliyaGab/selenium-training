@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using NUnit.Framework;
 using System.Text.RegularExpressions;
+using OpenQA.Selenium.Support.UI;
 
 namespace selenium_training_csharp
 {
@@ -48,6 +49,51 @@ namespace selenium_training_csharp
             Assert.AreEqual(salePriceText, salePriceFromPage.Text);
             AssertStyles(salePriceFromPage, regularPriceFromPage);
             
+        }
+        [Test]
+        public void CartTest_HW13()
+        {
+            driver.Url = "http://localhost/litecart/";
+            var quantity = Convert.ToInt32(driver.FindElement(By.CssSelector("span.quantity")).Text);
+            for (int i = 0; i < 3; i++)
+            {
+                driver.FindElement(By.CssSelector("li.product a.link")).Click();
+                if (IsElementPresent(By.Name("options[Size]")))
+                {
+                    (new SelectElement(driver.FindElement(By.Name("options[Size]")))).SelectByValue("Small");
+                }                              
+                driver.FindElement(By.Name("add_cart_product")).Click();
+                wait.Until(d => d.FindElement(By.CssSelector("span.quantity")).Text == (quantity+1).ToString());
+                quantity++;
+                driver.FindElement(By.CssSelector("#logotype-wrapper img")).Click();
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("rslides1_s0")));
+            }
+            driver.FindElement(By.CssSelector("a[href$=checkout].link")).Click();
+            var products = driver.FindElements(By.CssSelector("ul.shortcuts a"));
+            if (products.Count == 0)
+            {
+                driver.FindElement(By.Name("remove_cart_item")).Click();
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//em[text()='There are no items in your cart.']")));
+            }
+            else
+            {
+                for (int i = 0; i < products.Count; i++)
+                {
+
+                    driver.FindElement(By.CssSelector("ul.shortcuts a")).Click();
+                    var table = driver.FindElement(By.CssSelector("table.dataTable"));
+                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Name("remove_cart_item")));
+                    driver.FindElement(By.Name("remove_cart_item")).Click();
+                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.StalenessOf(table));
+                    products = driver.FindElements(By.CssSelector("ul.shortcuts a"));
+                    if (products.Count == 0)
+                    {
+                        driver.FindElement(By.Name("remove_cart_item")).Click();
+                        wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//em[text()='There are no items in your cart.']")));
+                        break;
+                    }
+                }
+            }                    
         }
         public void AssertStyles(IWebElement salePrice, IWebElement regularPrice)
         {
