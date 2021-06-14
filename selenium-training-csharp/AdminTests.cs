@@ -135,6 +135,30 @@ namespace selenium_training_csharp
 
 
         }
+        [Test]
+        public void LinksTest_HW14()
+        {
+            driver.Url = "http://localhost/litecart/admin/";
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            WaitUntilElementIsVisible(By.CssSelector("i.fa-sign-out"));
+            driver.FindElement(By.CssSelector("a[href$=countries]")).Click();
+            WaitUntilElementIsClickable(By.CssSelector("i.fa.fa-pencil"));
+            driver.FindElement(By.CssSelector("i.fa.fa-pencil")).Click();
+            var linkElements = driver.FindElements(By.CssSelector("#content a[target=_blank] i.fa-external-link"));
+            for (int i=0; i< linkElements.Count; i++)
+            {
+                var mainWindow = driver.CurrentWindowHandle;
+                var oldWindows = driver.WindowHandles;
+                linkElements[i].Click();
+                string newWindow = wait.Until(d => d.WindowHandles.First(x => !oldWindows.Contains(x)));
+                driver.SwitchTo().Window(newWindow);
+                driver.Close();
+                driver.SwitchTo().Window(mainWindow);
+                               
+            }
+        }
         public bool IsElementsTextSorted(By elementsLocator)
         {
             var elements = driver.FindElements(elementsLocator);

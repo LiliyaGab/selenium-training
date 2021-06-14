@@ -49,5 +49,13 @@ namespace selenium_training_csharp
                 return false;
             }           
         }
+        public void WaitUntilElementIsClickable(By locator)
+        {
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+        }
+        public void WaitUntilElementIsVisible(By locator)
+        {
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+        }
     }
 }
